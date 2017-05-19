@@ -288,7 +288,7 @@ define([
         setApi: function(api) {
             this.api = api;
             this.panels['info'].setApi(api);
-            this.panels['protect'].setApi(api);
+            if (this.panels['protect']) this.panels['protect'].setApi(api);
         },
 
         loadDocument: function(data) {
