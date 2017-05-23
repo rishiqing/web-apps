@@ -128,6 +128,7 @@ define([
             this.api.asc_registerCallback('asc_onReplaceAll', _.bind(this.onApiTextReplaced, this));
             this.api.asc_registerCallback('asc_onCoAuthoringDisconnect', _.bind(this.onApiServerDisconnect, this, true));
             Common.NotificationCenter.on('api:disconnect',               _.bind(this.onApiServerDisconnect, this));
+            this.api.asc_registerCallback('on_signature_defaultcertificate_ret', _.bind(this.onDefaultCertificate, this));
             /** coauthoring begin **/
             if (this.mode.canCoAuthoring) {
                 if (this.mode.canChat)
@@ -634,6 +635,12 @@ define([
         },
 
         addInvisibleSign: function(menu) {
+            this.api.asc_GetDefaultCertificate();
+            menu.hide();
+            this.leftMenu.btnFile.toggle(false, true);
+        },
+
+        onDefaultCertificate: function(certificate) {
             var me = this,
                 win = new DE.Views.SignDialog({
                     api: me.api,
@@ -641,18 +648,14 @@ define([
                     handler: function(dlg, result) {
                         if (result == 'ok') {
                             var props = dlg.getSettings();
-                            me.api.asc_Sign();
+                            me.api.asc_Sign(props.certificateId);
                         }
                         Common.NotificationCenter.trigger('edit:complete');
                     }
                 });
 
             win.show();
-            win.setSettings({});
-            // win.setSettings(me.api.asc_getCertificateSettings());
-
-            menu.hide();
-            this.leftMenu.btnFile.toggle(false, true);
+            win.setSettings(certificate);
         },
 
         textNoTextFound         : 'Text not found',
