@@ -697,7 +697,7 @@ define([
                 me.mode.isEdit = false;
             };
 
-            var onSignatureClick = function(guid) {
+            var onSignatureClick = function(guid, width, height) {
                 if (_.isUndefined(me.fontStore)) {
                     me.fontStore = new Common.Collections.Fonts();
                     var fonts = DE.getController('Toolbar').getView('Toolbar').cmbFontName.store.toJSON();
@@ -714,6 +714,7 @@ define([
                     api: me.api,
                     signType: 'visible',
                     fontStore: me.fontStore,
+                    signSize: {width: width, height: height},
                     handler: function(dlg, result) {
                         if (result == 'ok') {
                             var props = dlg.getSettings();
@@ -723,6 +724,7 @@ define([
                     }
                 });
 
+                win.show();
                 win.show();
             };
 
