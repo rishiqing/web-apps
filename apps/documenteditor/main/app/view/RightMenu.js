@@ -57,6 +57,7 @@ define([
     'documenteditor/main/app/view/ShapeSettings',
     'documenteditor/main/app/view/MailMergeSettings',
     'documenteditor/main/app/view/TextArtSettings',
+    'documenteditor/main/app/view/SignatureSettings',
     'common/main/lib/component/Scroller'
 ], function (menuTemplate, $, _, Backbone) {
     'use strict';
@@ -195,6 +196,21 @@ define([
                 this.mergeSettings = new DE.Views.MailMergeSettings();
             }
 
+            if (mode && mode.isDesktopApp) {
+                this.btnSignature = new Common.UI.Button({
+                    hint: this.txtSignatureSettings,
+                    asctype: Common.Utils.documentSettingsType.Signature,
+                    enableToggle: true,
+                    disabled: true,
+                    toggleGroup: 'tabpanelbtnsGroup'
+                });
+                this._settings[Common.Utils.documentSettingsType.Signature]   = {panel: "id-signature-settings",      btn: this.btnSignature};
+
+                this.btnSignature.el    = $('#id-right-menu-signature'); this.btnSignature.render().setVisible(true);
+                this.btnSignature.on('click', _.bind(this.onBtnMenuClick, this));
+                this.signatureSettings = new DE.Views.SignatureSettings();
+            }
+
             if (_.isUndefined(this.scroller)) {
                 this.scroller = new Common.UI.Scroller({
                     el: $(this.el).find('.right-panel'),
@@ -224,6 +240,7 @@ define([
             this.shapeSettings.setApi(api).on('editcomplete', _.bind( fire, this));
             this.textartSettings.setApi(api).on('editcomplete', _.bind( fire, this));
             if (this.mergeSettings) this.mergeSettings.setApi(api).on('editcomplete', _.bind( fire, this));
+            if (this.signatureSettings) this.signatureSettings.setApi(api).on('editcomplete', _.bind( fire, this));
         },
 
         setMode: function(mode) {
@@ -304,6 +321,7 @@ define([
         txtShapeSettings:           'Shape Settings',
         txtTextArtSettings:         'Text Art Settings',
         txtChartSettings:           'Chart Settings',
-        txtMailMergeSettings:       'Mail Merge Settings'
+        txtMailMergeSettings:       'Mail Merge Settings',
+        txtSignatureSettings:       'Signature Settings'
     }, DE.Views.RightMenu || {}));
 });
