@@ -44,6 +44,7 @@ define([
     'core',
     'common/main/lib/util/utils',
     'common/main/lib/view/CopyWarningDialog',
+    'common/main/lib/view/SignDialog',
     'spreadsheeteditor/main/app/view/DocumentHolder',
     'spreadsheeteditor/main/app/view/HyperlinkSettingsDialog',
     'spreadsheeteditor/main/app/view/ParagraphSettingsAdvanced',
@@ -259,6 +260,7 @@ define([
             this.api.asc_registerCallback('asc_onFormulaCompleteMenu',  _.bind(this.onFormulaCompleteMenu, this));
             this.api.asc_registerCallback('asc_onShowSpecialPasteOptions',  _.bind(this.onShowSpecialPasteOptions, this));
             this.api.asc_registerCallback('asc_onHideSpecialPasteOptions',  _.bind(this.onHideSpecialPasteOptions, this));
+            this.api.asc_registerCallback('asc_onSignatureClick',           _.bind(this.onSignatureClick, this));
 
             return this;
         },
@@ -2391,7 +2393,38 @@ define([
             _conf && view.paraBulletsPicker.selectRecord(_conf.rec, true);
         },
 
-    guestText               : 'Guest',
+        onSignatureClick: function(guid, width, height) {
+            var me = this;
+            if (_.isUndefined(me.fontStore)) {
+                me.fontStore = new Common.Collections.Fonts();
+                var fonts = SSE.getController('Toolbar').getView('Toolbar').cmbFontName.store.toJSON();
+                var arr = [];
+                _.each(fonts, function(font, index){
+                    if (!font.cloneid) {
+                        arr.push(_.clone(font));
+                    }
+                });
+                me.fontStore.add(arr);
+            }
+
+            var win = new Common.Views.SignDialog({
+                api: me.api,
+                signType: 'visible',
+                fontStore: me.fontStore,
+                signSize: {width: width, height: height},
+                handler: function(dlg, result) {
+                    if (result == 'ok') {
+                        var props = dlg.getSettings();
+                        me.api.asc_Sign(props.certificateId, guid, props.images[0], props.images[1]);
+                    }
+                    Common.NotificationCenter.trigger('edit:complete', me.documentHolder);
+                }
+            });
+
+            win.show();
+        },
+
+        guestText               : 'Guest',
         textCtrlClick           : 'Press CTRL and click link',
         txtHeight               : 'Height',
         txtWidth                : 'Width',

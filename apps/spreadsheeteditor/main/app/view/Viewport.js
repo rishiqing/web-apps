@@ -151,7 +151,7 @@ define([
                 rightMenuView   = SSE.getController('RightMenu').getView('RightMenu');
 
             me._toolbar     = toolbarView.render(this.mode);
-            me._rightMenu   = rightMenuView.render();
+            me._rightMenu   = rightMenuView.render(this.mode);
         },
 
         setMode: function(mode, delay) {

@@ -118,6 +118,12 @@ define([
                     canFocused: false
                 }),
                 new Common.UI.MenuItem({
+                    el      : $('#fm-btn-protect',this.el),
+                    action  : 'protect',
+                    caption : this.btnProtectCaption,
+                    canFocused: false
+                }),
+                new Common.UI.MenuItem({
                     el      : $('#fm-btn-recent',this.el),
                     action  : 'recent',
                     caption : this.btnRecentFilesCaption,
@@ -195,10 +201,11 @@ define([
         applyMode: function() {
             this.items[5][this.mode.canPrint?'show':'hide']();
             this.items[6][(this.mode.canRename && !this.mode.isDesktopApp) ?'show':'hide']();
-            this.items[6].$el.find('+.devider')[!this.mode.isDisconnected?'show':'hide']();
-            this.items[7][this.mode.canOpenRecent?'show':'hide']();
-            this.items[8][this.mode.canCreateNew?'show':'hide']();
-            this.items[8].$el.find('+.devider')[this.mode.canCreateNew?'show':'hide']();
+            this.items[7][(this.mode.isDesktopApp) ?'show':'hide']();
+            this.items[7].$el.find('+.devider')[!this.mode.isDisconnected?'show':'hide']();
+            this.items[8][this.mode.canOpenRecent?'show':'hide']();
+            this.items[9][this.mode.canCreateNew?'show':'hide']();
+            this.items[9].$el.find('+.devider')[this.mode.canCreateNew?'show':'hide']();
 
             this.items[3][(this.mode.canDownload && (!this.mode.isDesktopApp || !this.mode.isOffline))?'show':'hide']();
             this.items[4][(this.mode.canDownload && this.mode.isDesktopApp && this.mode.isOffline)?'show':'hide']();
@@ -207,11 +214,11 @@ define([
             this.items[1][this.mode.isEdit?'show':'hide']();
             this.items[2][!this.mode.isEdit && this.mode.canEdit && this.mode.canRequestEditRights ?'show':'hide']();
 
-            this.items[10][(!this.mode.isOffline && this.document&&this.document.info&&(this.document.info.sharingSettings&&this.document.info.sharingSettings.length>0 ||
+            this.items[11][(!this.mode.isOffline && this.document&&this.document.info&&(this.document.info.sharingSettings&&this.document.info.sharingSettings.length>0 ||
                                                                                        this.mode.sharingSettingsUrl&&this.mode.sharingSettingsUrl.length))?'show':'hide']();
 
-            this.items[11][this.mode.isEdit?'show':'hide']();
-            this.items[11].$el.find('+.devider')[this.mode.isEdit?'show':'hide']();
+            this.items[12][this.mode.isEdit?'show':'hide']();
+            this.items[12].$el.find('+.devider')[this.mode.isEdit?'show':'hide']();
 
             this.mode.canBack ? this.$el.find('#fm-btn-back').show().prev().show() :
                                     this.$el.find('#fm-btn-back').hide().prev().hide();
@@ -222,7 +229,7 @@ define([
 
             if ( this.mode.canCreateNew ) {
                 if (this.mode.templates && this.mode.templates.length) {
-                    $('a',this.items[8].$el).text(this.btnCreateNewCaption + '...');
+                    $('a',this.items[9].$el).text(this.btnCreateNewCaption + '...');
                     this.panels['new'] = ((new SSE.Views.FileMenuPanels.CreateNew({menu: this, docs: this.mode.templates})).render());
                 }
             }
@@ -231,6 +238,11 @@ define([
                 if (this.mode.recent){
                     this.panels['recent'] = (new SSE.Views.FileMenuPanels.RecentFiles({menu:this, recent: this.mode.recent})).render();
                 }
+            }
+
+            if (this.mode.isDesktopApp) {
+                this.panels['protect'] = (new SSE.Views.FileMenuPanels.ProtectDoc({menu:this})).render();
+                this.panels['protect'].setMode(this.mode);
             }
 
             this.panels['help'].setLangConfig(this.mode.lang);
@@ -254,6 +266,7 @@ define([
         setApi: function(api) {
             this.api = api;
             if (this.panels['opts']) this.panels['opts'].setApi(api);
+            if (this.panels['protect']) this.panels['protect'].setApi(api);
             this.api.asc_registerCallback('asc_onDocumentName',  _.bind(this.onDocumentName, this));
         },
 
@@ -302,6 +315,7 @@ define([
         btnSettingsCaption      : 'Advanced Settings...',
         btnSaveAsCaption        : 'Save as',
         btnRenameCaption        : 'Rename...',
-        btnCloseMenuCaption     : 'Close Menu'
+        btnCloseMenuCaption     : 'Close Menu',
+        btnProtectCaption: 'Protect\\Sign'
     }, SSE.Views.FileMenu || {}));
 });
