@@ -721,12 +721,28 @@ define([
             this.cmbFuncLocale.setValue(item ? item.get('value') : 'en');
             this.updateFuncExample(item ? item.get('exampleValue') : this.txtExampleEn);
 
-            value = this.api.asc_getLocale();
-            if (value) {
-                item = this.cmbRegSettings.store.findWhere({value: value});
-                this.cmbRegSettings.setValue(item ? item.get('value') : Common.util.LanguageInfo.getLocalLanguageName(value)[1]);
+            value = Common.localStorage.getItem("sse-settings-reg-settings");
+            if (value!==null) {
+                item = this.cmbRegSettings.store.findWhere({value: parseInt(value)});
+                this.cmbRegSettings.setValue(item ? item.get('value') : 0x0409);
             } else {
-                this.cmbRegSettings.setValue((this.mode.lang) ? Common.util.LanguageInfo.getLocalLanguageName(parseInt(Common.util.LanguageInfo.getLocalLanguageCode(this.mode.lang)))[1] : 0x0409);
+                if (this.mode.lang) {
+                    var lang = this.mode.lang.toLowerCase(),
+                        langshort = lang.split("-")[0].toLowerCase(),
+                        code = Common.util.LanguageInfo.getLocalLanguageCode(lang),
+                        codefull, codeshort;
+                    this.cmbRegSettings.store.each(function(model){
+                        var val = model.get('value'),
+                            langname = Common.util.LanguageInfo.getLocalLanguageName(val)[0].toLowerCase();
+                        if ( langname == lang )
+                            codefull = val;
+                        if ( langname.indexOf(langshort)==0 )
+                            codeshort = val;
+                    });
+                    code = (codefull) ? codefull : ((codeshort) ? codeshort : ((code) ? Common.util.LanguageInfo.getLocalLanguageName(code)[1] : 0x0409));
+                    this.cmbRegSettings.setValue(code);
+                } else
+                    this.cmbRegSettings.setValue(0x0409);
             }
             this.updateRegionalExample(this.cmbRegSettings.getValue());
         },
