@@ -86,6 +86,39 @@ define([
             }, 50);
         },
 
+        createDelayedElementsViewer: function() {
+            var me = this;
+
+            me.menuViewCopy = new Common.UI.MenuItem({
+                caption: me.txtCopy,
+                value: 'copy'
+            });
+
+            me.menuViewUndo = new Common.UI.MenuItem({
+                caption: me.textUndo
+            });
+
+            me.menuViewCopySeparator = new Common.UI.MenuItem({
+                caption: '--'
+            });
+
+            me.menuViewAddComment = new Common.UI.MenuItem({
+                id: 'id-context-menu-item-view-add-comment',
+                caption: me.txtAddComment
+            });
+
+            this.viewModeMenu = new Common.UI.Menu({
+                items: [
+                    me.menuViewCopy,
+                    me.menuViewUndo,
+                    me.menuViewCopySeparator,
+                    me.menuViewAddComment
+                ]
+            });
+
+            me.fireEvent('createdelayedelements', [me]);
+        },
+
         createDelayedElements: function() {
             var me = this;
 
@@ -667,8 +700,8 @@ define([
             me.fireEvent('createdelayedelements', [me]);
         },
 
-        setMenuItemCommentCaptionMode: function (add, editable) {
-            this.pmiAddComment.setCaption(add ? this.txtAddComment : (editable ? this.txtEditComment : this.txtShowComment), true);
+        setMenuItemCommentCaptionMode: function (item, add, editable) {
+            item.setCaption(add ? this.txtAddComment : (editable ? this.txtEditComment : this.txtShowComment), true);
         },
 
         txtSort:                'Sort',
@@ -708,7 +741,7 @@ define([
         txtUngroup:             'Ungroup',
         txtGroup:               'Group',
         topCellText:            'Align Top',
-        centerCellText:         'Align Center',
+        centerCellText:         'Align Middle',
         bottomCellText:         'Align Bottom',
         vertAlignText:          'Vertical Alignment',
         txtTextAdvanced:        'Text Advanced Settings',
@@ -719,8 +752,8 @@ define([
         chartText:              'Chart Advanced Settings',
         directionText:          'Text Direction',
         directHText:            'Horizontal',
-        direct90Text:           'Rotate at 90°',
-        direct270Text:          'Rotate at 270°',
+        direct90Text:           'Rotate Text Down',
+        direct270Text:          'Rotate Text Up',
         txtAddNamedRange:       'Define Name',
         textFreezePanes:        'Freeze Panes',
         textUnFreezePanes:      'Unfreeze Panes',
@@ -754,7 +787,8 @@ define([
         txtShowComment: 'Show Comment',
         advancedImgText: 'Image Advanced Settings',
         textNone: 'None',
-        bulletsText: 'Bullets and Numbering'
+        bulletsText: 'Bullets and Numbering',
+        textUndo: 'Undo'
 
     }, SSE.Views.DocumentHolder || {}));
 });

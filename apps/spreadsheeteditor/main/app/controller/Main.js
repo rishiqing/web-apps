@@ -546,7 +546,8 @@ define([
                 /** coauthoring begin **/
                 value = Common.localStorage.getItem("sse-settings-livecomment");
                 this.isLiveCommenting = !(value!==null && parseInt(value) == 0);
-                this.isLiveCommenting?this.api.asc_showComments():this.api.asc_hideComments();
+                var resolved = Common.localStorage.getItem("sse-settings-resolvedcomment");
+                this.isLiveCommenting ? this.api.asc_showComments(!(resolved!==null && parseInt(resolved) == 0)) : this.api.asc_hideComments();
 
                 if (this.appOptions.isEdit && !this.appOptions.isOffline && this.appOptions.canCoAuthoring) {
                     value = Common.localStorage.getItem("sse-settings-coauthmode");
@@ -670,8 +671,11 @@ define([
                                 Common.NotificationCenter.trigger('document:ready', 'main');
                         }
                     }, 50);
-                } else if (me.appOptions.canBrandingExt)
-                    Common.NotificationCenter.trigger('document:ready', 'main');
+                } else {
+                    documentHolderView.createDelayedElementsViewer();
+                    if (me.appOptions.canBrandingExt)
+                        Common.NotificationCenter.trigger('document:ready', 'main');
+                }
 
                 if (me.appOptions.canAnalytics && false)
                     Common.component.Analytics.initialize('UA-12442749-13', 'Spreadsheet Editor');

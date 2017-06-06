@@ -182,10 +182,34 @@ define([
 
                 return {menu_to_show: menu_to_show, menu_props: menu_props};
             };
-            
+
+            var fillViewMenuProps = function(selectedElements) {
+                if (!selectedElements || !_.isArray(selectedElements)) return;
+
+                var menu_props = {},
+                    menu_to_show = null;
+                _.each(selectedElements, function(element, index) {
+                    var elType  = element.get_ObjectType(),
+                        elValue = element.get_ObjectValue();
+
+                    if (Asc.c_oAscTypeSelectElement.Image == elType || Asc.c_oAscTypeSelectElement.Table == elType || Asc.c_oAscTypeSelectElement.Shape == elType ||
+                        Asc.c_oAscTypeSelectElement.Chart == elType || Asc.c_oAscTypeSelectElement.Paragraph == elType) {
+                        menu_to_show = me.viewModeMenu;
+                        menu_props.locked = menu_props.locked || ((elValue) ? elValue.get_Locked() : false);
+                        if (Asc.c_oAscTypeSelectElement.Chart == elType)
+                            menu_props.isChart = true;
+                    }
+                    else if (Asc.c_oAscTypeSelectElement.Slide == elType) {
+                        menu_props.locked = menu_props.locked || ((elValue) ? elValue.get_LockDelete() : false);
+                    }
+                });
+
+                return (menu_to_show) ? {menu_to_show: menu_to_show, menu_props: menu_props} : null;
+            };
+
             var showObjectMenu = function(event, docElement, eOpts){
-                if (me.api && me.mode.isEdit){
-                    var obj = fillMenuProps(me.api.getSelectedElements());
+                if (me.api){
+                    var obj = (me.mode.isEdit) ? fillMenuProps(me.api.getSelectedElements()) : fillViewMenuProps(me.api.getSelectedElements());
                     if (obj) showPopupMenu(obj.menu_to_show, obj.menu_props, event, docElement, eOpts);
                 }
             };
@@ -201,14 +225,14 @@ define([
             };
 
             var onFocusObject = function(selectedElements) {
-                if (me.mode.isEdit && me.currentMenu && me.currentMenu.isVisible()){
+                if (me.currentMenu && me.currentMenu.isVisible()){
                     if (me.api.asc_getCurrentFocusObject() === 0 ){ // thumbnails
                         if (me.slideMenu===me.currentMenu) {
                             me.currentMenu.options.initMenu({isSlideSelect: me.slideMenu.items[2].isVisible(), fromThumbs: true});
                             me.currentMenu.alignPosition();
                         }
                     } else {
-                        var obj = fillMenuProps(selectedElements);
+                        var obj = (me.mode.isEdit) ? fillMenuProps(selectedElements) : fillViewMenuProps(selectedElements);
                         if (obj) {
                             if (obj.menu_to_show===me.currentMenu) {
                                 me.currentMenu.options.initMenu(obj.menu_props);
@@ -1699,6 +1723,53 @@ define([
             }
         },
 
+        createDelayedElementsViewer: function() {
+            var me = this;
+
+            var menuViewCopy = new Common.UI.MenuItem({
+                caption: me.textCopy,
+                value: 'copy'
+            }).on('click', _.bind(me.onCutCopyPaste, me));
+
+            var menuViewUndo = new Common.UI.MenuItem({
+                caption: me.textUndo
+            }).on('click', function () {
+                me.api.Undo();
+            });
+
+            var menuViewCopySeparator = new Common.UI.MenuItem({
+                caption: '--'
+            });
+
+            var menuViewAddComment = new Common.UI.MenuItem({
+                caption: me.addCommentText
+            }).on('click', _.bind(me.addComment, me));
+
+            this.viewModeMenu = new Common.UI.Menu({
+                initMenu: function (value) {
+                    menuViewUndo.setVisible(me.mode.isEdit);
+                    menuViewCopySeparator.setVisible(!value.isChart && me.api.can_AddQuotedComment() !== false && me.mode.canCoAuthoring && me.mode.canComments && me.mode.isEdit);
+                    menuViewAddComment.setVisible(!value.isChart && me.api.can_AddQuotedComment() !== false && me.mode.canCoAuthoring && me.mode.canComments && me.mode.isEdit);
+                    menuViewAddComment.setDisabled(value.locked);
+                },
+                items: [
+                    menuViewCopy,
+                    menuViewUndo,
+                    menuViewCopySeparator,
+                    menuViewAddComment
+                ]
+            }).on('hide:after', function (menu, e, isFromInputControl) {
+                if (me.suppressEditComplete) {
+                    me.suppressEditComplete = false;
+                    return;
+                }
+
+                if (!isFromInputControl) me.fireEvent('editcomplete', me);
+                me.currentMenu = null;
+            });
+
+        },
+
         createDelayedElements: function(){
             var me = this;
 
@@ -1935,19 +2006,19 @@ define([
                         menuAlign: 'tl-tr',
                         items: [
                             me.menuTableCellTop = new Common.UI.MenuItem({
-                                caption     : me.topCellText,
+                                caption     : me.textShapeAlignTop,
                                 checkable   : true,
                                 toggleGroup : 'popuptablecellalign',
                                 value       : Asc.c_oAscVertAlignJc.Top
                             }).on('click', _.bind(onItemClick, me)),
                             me.menuTableCellCenter = new Common.UI.MenuItem({
-                                caption     : me.centerCellText,
+                                caption     : me.textShapeAlignMiddle,
                                 checkable   : true,
                                 toggleGroup : 'popuptablecellalign',
                                 value       : Asc.c_oAscVertAlignJc.Center
                             }).on('click', _.bind(onItemClick, me)),
                             me.menuTableCellBottom = new Common.UI.MenuItem({
-                                caption     : me.bottomCellText,
+                                caption     : me.textShapeAlignBottom,
                                 checkable   : true,
                                 toggleGroup : 'popuptablecellalign',
                                 value       : Asc.c_oAscVertAlignJc.Bottom
@@ -2458,19 +2529,19 @@ define([
                         menuAlign: 'tl-tr',
                         items: [
                             me.menuParagraphTop = new Common.UI.MenuItem({
-                                caption     : me.topCellText,
+                                caption     : me.textShapeAlignTop,
                                 checkable   : true,
                                 toggleGroup : 'popupparagraphvalign',
                                 value       : Asc.c_oAscVAlign.Top
                             }).on('click', _.bind(onItemClick, me)),
                             me.menuParagraphCenter = new Common.UI.MenuItem({
-                                caption     : me.centerCellText,
+                                caption     : me.textShapeAlignMiddle,
                                 checkable   : true,
                                 toggleGroup : 'popupparagraphvalign',
                                 value       : Asc.c_oAscVAlign.Center
                             }).on('click', _.bind(onItemClick, me)),
                             me.menuParagraphBottom = new Common.UI.MenuItem({
-                                caption     : me.bottomCellText,
+                                caption     : me.textShapeAlignBottom,
                                 checkable   : true,
                                 toggleGroup : 'popupparagraphvalign',
                                 value       : Asc.c_oAscVAlign.Bottom
@@ -3105,9 +3176,6 @@ define([
         txtDistribHor           : 'Distribute Horizontally',
         txtDistribVert          : 'Distribute Vertically',
         txtSlide                : 'Slide',
-        topCellText             : 'Align Top',
-        centerCellText          : 'Align Center',
-        bottomCellText          : 'Align Bottom',
         cellAlignText           : 'Cell Vertical Alignment',
         advancedShapeText       : 'Shape Advanced Settings',
         /** coauthoring begin **/
@@ -3126,8 +3194,8 @@ define([
         textSlideSettings: 'Slide Settings',
         directionText: 'Text Direction',
         directHText: 'Horizontal',
-        direct90Text: 'Rotate at 90°',
-        direct270Text: 'Rotate at 270°',
+        direct90Text: 'Rotate Text Down',
+        direct270Text: 'Rotate Text Up',
         txtRemoveAccentChar: 'Remove accent character',
         txtBorderProps: 'Borders property',
         txtHideTop: 'Hide top border',
@@ -3208,7 +3276,8 @@ define([
         noSpellVariantsText: 'No variants',
         moreText: 'More variants...',
         spellcheckText: 'Spellcheck',
-        langText: 'Select Language'
+        langText: 'Select Language',
+        textUndo: 'Undo'
 
     }, PE.Views.DocumentHolder || {}));
 });
