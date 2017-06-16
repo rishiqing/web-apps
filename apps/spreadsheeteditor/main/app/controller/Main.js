@@ -422,7 +422,7 @@ define([
                 action && this.setLongActionView(action);
 
                 if (id == Asc.c_oAscAsyncAction.Save) {
-                    this.toolbarView.synchronizeChanges();
+                    this.toolbarView && this.toolbarView.synchronizeChanges();
                 }
 
                 action = this.stackLongActions.get({type: Asc.c_oAscAsyncActionType.BlockInteraction});
@@ -556,8 +556,10 @@ define([
                         value = 0; // use customization.autosave only when sse-settings-coauthmode and sse-settings-autosave are null
                     }
                     this._state.fastCoauth = (value===null || parseInt(value) == 1);
-                } else
-                    this._state.fastCoauth = false;
+                } else {
+                    this._state.fastCoauth = (!this.appOptions.isEdit && this.appOptions.canComments);
+                    this._state.fastCoauth && this.api.asc_setAutoSaveGap(1);
+                }
                 this.api.asc_SetFastCollaborative(this._state.fastCoauth);
                 /** coauthoring end **/
 
@@ -765,8 +767,9 @@ define([
                     /** coauthoring begin **/
                     this.appOptions.canCoAuthoring = !this.appOptions.isLightVersion;
                     /** coauthoring end **/
-                    this.appOptions.canComments    = (licType === Asc.c_oLicenseResult.Success || licType === Asc.c_oLicenseResult.SuccessLimit) && !((typeof (this.editorConfig.customization) == 'object') && this.editorConfig.customization.comments===false);
-                    this.appOptions.canChat        = (licType === Asc.c_oLicenseResult.Success || licType === Asc.c_oLicenseResult.SuccessLimit) && !this.appOptions.isOffline && !((typeof (this.editorConfig.customization) == 'object') && this.editorConfig.customization.chat===false);
+                    this.appOptions.canComments    = this.appOptions.canLicense && (this.permissions.comments===undefined ? (this.permissions.edit !== false && this.editorConfig.mode !== 'view') : this.permissions.comments);
+                    this.appOptions.canComments    = this.appOptions.canComments && !((typeof (this.editorConfig.customization) == 'object') && this.editorConfig.customization.comments===false);
+                    this.appOptions.canChat        = this.appOptions.canLicense && !this.appOptions.isOffline && !((typeof (this.editorConfig.customization) == 'object') && this.editorConfig.customization.chat===false);
                     this.appOptions.canRename      = !!this.permissions.rename;
                     this.appOptions.isTrial        = params.asc_getTrial();
 
@@ -797,7 +800,8 @@ define([
                 this.applyModeCommonElements();
                 this.applyModeEditorElements();
 
-                this.api.asc_setViewMode(!this.appOptions.isEdit);
+                this.api.asc_setViewMode(!this.appOptions.isEdit && !this.appOptions.canComments);
+                (!this.appOptions.isEdit && this.appOptions.canComments) && this.api.asc_setRestriction(Asc.c_oAscRestrictionType.OnlyComments);
                 (this.appOptions.isEditMailMerge || this.appOptions.isEditDiagram) ? this.api.asc_LoadEmptyDocument() : this.api.asc_LoadDocument();
 
                 if (!this.appOptions.isEdit) {
@@ -871,45 +875,37 @@ define([
             },
 
             applyModeEditorElements: function(prevmode) {
+                if (this.appOptions.canComments || this.appOptions.isEdit) {
+                    /** coauthoring begin **/
+                    var commentsController  = this.getApplication().getController('Common.Controllers.Comments');
+                    if (commentsController) {
+                        commentsController.setMode(this.appOptions);
+                        commentsController.setConfig({
+                                config      : this.editorConfig,
+                                sdkviewname : '#ws-canvas-outer',
+                                hintmode    : true},
+                            this.api);
+                    }
+                    /** coauthoring end **/
+                }
+
                 if (this.appOptions.isEdit) {
                     var me = this,
                         application         = this.getApplication(),
                         toolbarController   = application.getController('Toolbar'),
                         statusbarController = application.getController('Statusbar'),
                         rightmenuController = application.getController('RightMenu'),
-                        /** coauthoring begin **/
-                            commentsController  = application.getController('Common.Controllers.Comments'),
-                        /** coauthoring end **/
-                            fontsControllers    = application.getController('Common.Controllers.Fonts');
+                        fontsControllers    = application.getController('Common.Controllers.Fonts');
 
                     fontsControllers    && fontsControllers.setApi(me.api);
                     toolbarController   && toolbarController.setApi(me.api);
 //                    statusbarController && statusbarController.setApi(me.api);
-
-                    if (commentsController) {
-                        commentsController.setMode(this.appOptions);
-                        commentsController.setConfig({
-                                config      : me.editorConfig,
-                                sdkviewname : '#ws-canvas-outer',
-                                hintmode    : true},
-                            me.api);
-                    }
 
                     rightmenuController && rightmenuController.setApi(me.api);
 
                     if (statusbarController) {
                         statusbarController.getView('Statusbar').changeViewMode(true);
                     }
-
-                     /** coauthoring begin **/
-                    if (prevmode=='view') {
-                        if (commentsController) {
-                            Common.NotificationCenter.trigger('comments:updatefilter',{
-                                property : 'uid',
-                                value    : new RegExp('^(doc_|sheet' + this.api.asc_getActiveWorksheetId() + '_)')});
-                        }
-                    }
-                    /** coauthoring end **/
 
                     var viewport = this.getApplication().getController('Viewport').getView('Viewport');
                     viewport.applyEditorMode();

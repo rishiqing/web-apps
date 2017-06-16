@@ -1559,7 +1559,7 @@ define([
 
                 me.mode = mode;
                 /** coauthoring begin **/
-                !(me.mode.canCoAuthoring && me.mode.isEdit && me.mode.canComments)
+                !(me.mode.canCoAuthoring && me.mode.canComments)
                     ? Common.util.Shortcuts.suspendEvents(hkComments)
                     : Common.util.Shortcuts.resumeEvents(hkComments);
                 /** coauthoring end **/
@@ -1641,7 +1641,7 @@ define([
 
         /** coauthoring begin **/
         addComment: function(item, e, eOpt){
-            if (this.api && this.mode.canCoAuthoring && this.mode.isEdit && this.mode.canComments) {
+            if (this.api && this.mode.canCoAuthoring && this.mode.canComments) {
                 this.suppressEditComplete = true;
 
                 var controller = PE.getController('Common.Controllers.Comments');
@@ -1747,9 +1747,10 @@ define([
 
             this.viewModeMenu = new Common.UI.Menu({
                 initMenu: function (value) {
-                    menuViewUndo.setVisible(me.mode.isEdit);
-                    menuViewCopySeparator.setVisible(!value.isChart && me.api.can_AddQuotedComment() !== false && me.mode.canCoAuthoring && me.mode.canComments && me.mode.isEdit);
-                    menuViewAddComment.setVisible(!value.isChart && me.api.can_AddQuotedComment() !== false && me.mode.canCoAuthoring && me.mode.canComments && me.mode.isEdit);
+                    menuViewUndo.setVisible(me.mode.canCoAuthoring && me.mode.canComments);
+                    menuViewUndo.setDisabled(!me.api.asc_getCanUndo());
+                    menuViewCopySeparator.setVisible(!value.isChart && me.api.can_AddQuotedComment() !== false && me.mode.canCoAuthoring && me.mode.canComments);
+                    menuViewAddComment.setVisible(!value.isChart && me.api.can_AddQuotedComment() !== false && me.mode.canCoAuthoring && me.mode.canComments);
                     menuViewAddComment.setDisabled(value.locked);
                 },
                 items: [
