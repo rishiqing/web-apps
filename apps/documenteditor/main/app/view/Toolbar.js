@@ -457,7 +457,7 @@ define([
                 this.btnInsertTable = new Common.UI.Button({
                     id: 'tlb-btn-instable',
                     cls: 'btn-toolbar x-huge icon-top',
-                    iconCls: 'btn-inserttable',
+                    iconCls: 'svgicon svg-btn-table',
                     caption: me.capBtnInsTable,
                     menu: new Common.UI.Menu({
                         items: [
@@ -471,7 +471,7 @@ define([
                 this.btnInsertImage = new Common.UI.Button({
                     id: 'tlb-btn-insimage',
                     cls: 'btn-toolbar x-huge icon-top',
-                    iconCls: 'btn-insertimage',
+                    iconCls: 'svgicon svg-btn-image',
                     caption: me.capBtnInsImage,
                     menu: new Common.UI.Menu({
                         items: [
@@ -486,7 +486,7 @@ define([
                     id: 'tlb-btn-inschart',
                     cls: 'btn-toolbar x-huge icon-top',
                     caption: me.capBtnInsChart,
-                    iconCls: 'btn-insertchart',
+                    iconCls: 'svgicon svg-btn-chart',
                     menu: new Common.UI.Menu({
                         style: 'width: 435px;',
                         items: [
@@ -499,14 +499,16 @@ define([
                 this.btnInsertText = new Common.UI.Button({
                     id: 'tlb-btn-inserttext',
                     cls: 'btn-toolbar x-huge icon-top',
-                    iconCls: 'btn-text',
+                    iconCls: 'svgicon svg-btn-textbox',
                     caption: me.capBtnInsTextbox,
                     enableToggle: true
                 });
                 this.paragraphControls.push(this.btnInsertText);
+
                 this.btnInsertTextArt = new Common.UI.Button({
                     id: 'tlb-btn-instextart',
                     cls: 'btn-toolbar x-huge icon-top',
+                    // iconCls: 'svgicon svg-btn-textart',
                     iconCls: 'btn-textart',
                     caption: me.capBtnInsTextart,
                     menu: new Common.UI.Menu({
@@ -522,7 +524,7 @@ define([
                     id: 'tlb-btn-inshyperlink',
                     cls: 'btn-toolbar x-huge icon-top',
                     caption: me.capBtnInsLink,
-                    iconCls: 'btn-inserthyperlink'
+                    iconCls: 'svgicon svg-btn-hlink'
                 });
                 this.paragraphControls.push(this.btnInsertHyperlink);
 
@@ -552,7 +554,7 @@ define([
                 this.btnInsertShape = new Common.UI.Button({
                     id: 'tlb-btn-insshape',
                     cls: 'btn-toolbar x-huge icon-top',
-                    iconCls: 'btn-insertshape',
+                    iconCls: 'svgicon svg-btn-shape',
                     caption: me.capBtnInsShape,
                     enableToggle: true,
                     menu: new Common.UI.Menu({cls: 'menu-shapes'})
@@ -562,7 +564,7 @@ define([
                 this.btnInsertEquation = new Common.UI.Button({
                     id: 'tlb-btn-insequation',
                     cls: 'btn-toolbar x-huge icon-top',
-                    iconCls: 'btn-insertequation',
+                    iconCls: 'svgicon svg-btn-equation',
                     caption: me.capBtnInsEquation,
                     split: true,
                     menu: new Common.UI.Menu({cls: 'menu-shapes'})
@@ -925,8 +927,8 @@ define([
 
                 this.btnNotes = new Common.UI.Button({
                     id: 'id-toolbar-btn-notes',
-                    cls: 'btn-toolbar',
-                    iconCls: 'btn-notes',
+                    cls: 'btn-toolbar x-huge icon-top',
+                    iconCls: 'svgicon svg-btn-notes',
                     caption: me.capBtnInsFootnote,
                     split: true,
                     menu: true

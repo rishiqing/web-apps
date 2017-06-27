@@ -2790,12 +2790,16 @@ define([
                 var _btnsComment = [];
                 var slots = me.toolbar.$el.find('.slot-comment');
                 slots.each(function(index, el) {
-                    var _cls = 'btn-toolbar';
-                    /x-huge/.test(el.className) && (_cls += ' x-huge icon-top');
+                    var _cls = 'btn-toolbar',
+                        _icls = 'btn-menu-comments';
+                    if ( /x-huge/.test(el.className) ) {
+                        _cls += ' x-huge icon-top';
+                        _icls = 'svgicon svg-btn-comment'
+                    }
 
                     var button = new Common.UI.Button({
                         cls: _cls,
-                        iconCls: 'btn-menu-comments',
+                        iconCls: _icls,
                         caption: me.toolbar.capBtnComment
                     }).render( slots.eq(index) );
 

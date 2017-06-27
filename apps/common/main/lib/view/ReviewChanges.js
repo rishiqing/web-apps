@@ -497,13 +497,13 @@ define([
                 if ( this.appConfig.canReview ) {
                     this.btnPrev = new Common.UI.Button({
                         cls: 'btn-toolbar x-huge icon-top',
-                        iconCls: 'review-prev',
+                        iconCls: 'svgicon svg-btn-prev',
                         caption: this.txtPrev
                     });
 
                     this.btnNext = new Common.UI.Button({
                         cls: 'btn-toolbar x-huge icon-top',
-                        iconCls: 'review-next',
+                        iconCls: 'svgicon svg-btn-next',
                         caption: this.txtNext
                     });
 
@@ -511,19 +511,19 @@ define([
                         cls: 'btn-toolbar x-huge icon-top',
                         caption: this.txtAccept,
                         split: true,
-                        iconCls: 'review-save'
+                        iconCls: 'svgicon svg-btn-accept'
                     });
 
                     this.btnReject = new Common.UI.Button({
                         cls: 'btn-toolbar x-huge icon-top',
                         caption: this.txtReject,
                         split: true,
-                        iconCls: 'review-deny'
+                        iconCls: 'svgicon svg-btn-reject'
                     });
 
                     this.btnTurnOn = new Common.UI.Button({
                         cls: 'btn-toolbar x-huge icon-top',
-                        iconCls: 'btn-ic-review',
+                        iconCls: 'svgicon svg-btn-review',
                         caption: this.txtTurnon,
                         enableToggle: true
                     });
@@ -532,7 +532,7 @@ define([
 
                 this.btnSetSpelling = new Common.UI.Button({
                     cls: 'btn-toolbar x-huge icon-top',
-                    iconCls: 'btn-ic-docspell',
+                    iconCls: 'svgicon svg-btn-spellcheck',
                     caption: this.txtSpelling,
                     enableToggle: true
                 });
@@ -540,7 +540,7 @@ define([
 
                 this.btnDocLang = new Common.UI.Button({
                     cls: 'btn-toolbar x-huge icon-top',
-                    iconCls: 'btn-ic-doclang',
+                    iconCls: 'svgicon svg-btn-lang',
                     caption: this.txtDocLang,
                     disabled: true
                 });

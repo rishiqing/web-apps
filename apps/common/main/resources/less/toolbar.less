@@ -247,9 +247,11 @@
 }
 
 .btn-toolbar {
-    &:active {
-        svg.icon {
-            fill: #fff;
+    &:active, &.active {
+        &:not(.disabled) {
+            svg.icon {
+                fill: #fff;
+            }
         }
     }
 
@@ -257,6 +259,12 @@
         background-image: none;
 
         fill: @gray-deep;
+    }
+
+    &.disabled {
+        svg.icon {
+            opacity: 0.4;
+        }
     }
 }
 
