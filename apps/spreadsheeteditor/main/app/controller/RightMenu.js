@@ -101,7 +101,6 @@ define([
                     panel.ChangeSettings.call(panel, (type==Common.Utils.documentSettingsType.Signature) ? undefined : props);
             }
             Common.NotificationCenter.trigger('layout:changed', 'rightmenu');
-            Common.NotificationCenter.trigger('edit:complete', this.rightmenu);
         },
 
         onSelectionChanged: function(info) {
