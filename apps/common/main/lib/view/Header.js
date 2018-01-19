@@ -83,6 +83,13 @@ define([
                 // canBack         : this.canBack,
                 // textBack        : this.textBack
             }));
+            var p = navigator.platform;
+            var ua = navigator.userAgent;
+            if (p.indexOf('Mac') === 0 && /rishiqing-pc\/(\S+)/.test(ua)) {// mac 日事清pc端
+                $('body').addClass('mac electron');
+            } else {
+                $('body').removeClass('mac electron');
+            }
 
             var menuNewTab = new Common.UI.MenuItem({
                 caption     : this.openNewTabText
