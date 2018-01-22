@@ -285,12 +285,12 @@ define([
                     hintAnchor: 'top'
                 });
 
-                this.btnDocLanguage = new Common.UI.Button({
-                    el: $('#btn-doc-lang',this.el),
-                    hint: this.tipSetDocLang,
-                    hintAnchor: 'top',
-                    disabled: true
-                });
+                // this.btnDocLanguage = new Common.UI.Button({
+                //     el: $('#btn-doc-lang',this.el),
+                //     hint: this.tipSetDocLang,
+                //     hintAnchor: 'top',
+                //     disabled: true
+                // });
 
                 this.btnSetSpelling = new Common.UI.Button({
                     el: $('#btn-doc-spell',this.el),
@@ -299,46 +299,46 @@ define([
                     hintAnchor: 'top'
                 });
 
-                var panelLang = $('.cnt-lang',this.el);
-                this.langMenu = new Common.UI.Menu({
-                    style: 'margin-top:-5px;',
-                    maxHeight: 300,
-                    itemTemplate: _.template([
-                        '<a id="<%= id %>" tabindex="-1" type="menuitem">',
-                            '<span class="lang-item-icon lang-flag <%= iconCls %>"></span>',
-                            '<%= caption %>',
-                        '</a>'
-                    ].join('')),
-                    menuAlign: 'bl-tl'
-                });
+                // var panelLang = $('.cnt-lang',this.el);
+                // this.langMenu = new Common.UI.Menu({
+                //     style: 'margin-top:-5px;',
+                //     maxHeight: 300,
+                //     itemTemplate: _.template([
+                //         '<a id="<%= id %>" tabindex="-1" type="menuitem">',
+                //             '<span class="lang-item-icon lang-flag <%= iconCls %>"></span>',
+                //             '<%= caption %>',
+                //         '</a>'
+                //     ].join('')),
+                //     menuAlign: 'bl-tl'
+                // });
 
-                this.btnLanguage = new Common.UI.Button({
-                    el: panelLang,
-                    hint: this.tipSetLang,
-                    hintAnchor: 'top-left',
-                    disabled: true
-                });
-                this.btnLanguage.cmpEl.on({
-                    'show.bs.dropdown': function () {
-                        _.defer(function(){
-                            me.btnLanguage.cmpEl.find('ul').focus();
-                        }, 100);
-                    },
-                    'hide.bs.dropdown': function () {
-                        _.defer(function(){
-                            me.api.asc_enableKeyEvents(true);
-                        }, 100);
-                    },
-                    'click': function (e) {
-                        if (me.btnLanguage.isDisabled()) {
-                            return false;
-                        }
-                    }
-                });
+                // this.btnLanguage = new Common.UI.Button({
+                //     el: panelLang,
+                //     hint: this.tipSetLang,
+                //     hintAnchor: 'top-left',
+                //     disabled: true
+                // });
+                // this.btnLanguage.cmpEl.on({
+                //     'show.bs.dropdown': function () {
+                //         _.defer(function(){
+                //             me.btnLanguage.cmpEl.find('ul').focus();
+                //         }, 100);
+                //     },
+                //     'hide.bs.dropdown': function () {
+                //         _.defer(function(){
+                //             me.api.asc_enableKeyEvents(true);
+                //         }, 100);
+                //     },
+                //     'click': function (e) {
+                //         if (me.btnLanguage.isDisabled()) {
+                //             return false;
+                //         }
+                //     }
+                // });
 
-                this.langMenu.render(panelLang);
-                this.langMenu.cmpEl.attr({tabindex: -1});
-                this.langMenu.prevTip = 'en';
+                // this.langMenu.render(panelLang);
+                // this.langMenu.cmpEl.attr({tabindex: -1});
+                // this.langMenu.prevTip = 'en';
                 // this.langMenu.on('item:click', _.bind(_clickLanguage,this));
 
                 return this;
@@ -449,23 +449,23 @@ define([
             },
 
             reloadLanguages: function(array) {
-                this.langMenu.removeAll();
-                _.each(array, function(item) {
-                    this.langMenu.addItem({
-                        iconCls     : item['tip'],
-                        caption     : item['title'],
-                        value       : {tip: item['tip'], code: item['code']},
-                        checkable   : true,
-                        checked     : this.langMenu.saved == item.title,
-                        toggleGroup : 'language'
-                    });
-                }, this);
+                // this.langMenu.removeAll();
+                // _.each(array, function(item) {
+                //     this.langMenu.addItem({
+                //         iconCls     : item['tip'],
+                //         caption     : item['title'],
+                //         value       : {tip: item['tip'], code: item['code']},
+                //         checkable   : true,
+                //         checked     : this.langMenu.saved == item.title,
+                //         toggleGroup : 'language'
+                //     });
+                // }, this);
 
-                this.langMenu.doLayout();
-                if (this.langMenu.items.length>0) {
-                    this.btnLanguage.setDisabled(false || this._state.no_paragraph);
-                    this.btnDocLanguage.setDisabled(!!this.mode.isDisconnected);
-                }
+                // this.langMenu.doLayout();
+                // if (this.langMenu.items.length>0) {
+                //     this.btnLanguage.setDisabled(false || this._state.no_paragraph);
+                //     this.btnDocLanguage.setDisabled(!!this.mode.isDisconnected);
+                // }
             },
 
             setLanguage: function(info) {
@@ -486,9 +486,9 @@ define([
             },
 
             SetDisabled: function(disable) {
-                var langs = this.langMenu.items.length>0;
-                this.btnLanguage.setDisabled(disable || !langs || this._state.no_paragraph);
-                this.btnDocLanguage.setDisabled(disable || !langs);
+                // var langs = this.langMenu.items.length>0;
+                // this.btnLanguage.setDisabled(disable || !langs || this._state.no_paragraph);
+                // this.btnDocLanguage.setDisabled(disable || !langs);
             },
 
             onApiFocusObject: function(selectedObjects) {
@@ -503,9 +503,9 @@ define([
                         if (this._state.no_paragraph) break;  // break if one of the objects is locked
                     }
                 }
-                this._state.no_paragraph = this._state.no_paragraph || this.langMenu.items.length<1;
-                if (this._state.no_paragraph !== this.btnLanguage.isDisabled())
-                    this.btnLanguage.setDisabled(this._state.no_paragraph);
+                // this._state.no_paragraph = this._state.no_paragraph || this.langMenu.items.length<1;
+                // if (this._state.no_paragraph !== this.btnLanguage.isDisabled())
+                //     this.btnLanguage.setDisabled(this._state.no_paragraph);
             },
 
             onApiCoAuthoringDisconnect: function() {

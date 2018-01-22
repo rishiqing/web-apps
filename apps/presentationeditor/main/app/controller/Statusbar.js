@@ -74,7 +74,7 @@ define([
             return {
                 'click #btn-zoom-down': _.bind(this.zoomDocument,this,'down'),
                 'click #btn-zoom-up': _.bind(this.zoomDocument,this,'up'),
-                'click #btn-doc-lang':_.bind(this.onBtnLanguage,this)
+                // 'click #btn-doc-lang':_.bind(this.onBtnLanguage,this)
             };
         },
 
